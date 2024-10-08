@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="rw">
 <head>
@@ -12,15 +10,18 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      font-family: 'Poppins', sans-serif;
     }
     main {
       flex: 1;
     }
+    .full-width-image img {
+      width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body class="bg-gray-100">
-   
-
   <!-- Umutwe w'urubuga (Header) -->
   <header class="bg-white shadow-md py-4">
     <div class="container mx-auto flex justify-between items-center px-4">
@@ -35,6 +36,11 @@
       </nav>
     </div>
   </header>
+
+  <!-- Full-width Image -->
+  <section class="full-width-image">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZZdb6qDfGRWSISbJpWPpbrOeZfM83gCb6qg&s" alt="Full-width banner">
+  </section>
 
   <!-- Ibikubiye mu rubuga (Main Content) -->
   <main class="container mx-auto my-8 px-4">
@@ -73,7 +79,6 @@
         </article>
       </div>
     </section>
-
   </main>
 
   <!-- Akadomo ka nyuma (Footer) -->
@@ -87,12 +92,5 @@
       </ul>
     </div>
   </footer>
-
 </body>
 </html>
-
-<style>
-    body{
-        font-family: 'poppins';
-    }
-</style>
