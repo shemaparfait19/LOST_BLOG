@@ -7,59 +7,104 @@ use Illuminate\Http\Request;
 
 class SystemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
-        return view('blog.index');
+        $systems = System::all(); 
+        
+        return view('blog.index', compact('systems'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
-        //
+        return view('blog.create'); 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    
+    public function insert(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'image' => 'required|image',
+            'fewdesc' => 'required',
+            'moredesc' => 'required',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $storagePath = public_path('images/stored');
+
+            if (!file_exists($storagePath)) {
+                mkdir($storagePath, 0755, true);
+            }
+
+            $image->move($storagePath, $imageName);
+        }
+
+        System::create([
+            'title' => $request->title,
+            'image' => "images/stored/{$imageName}",
+            'fewdesc' => $request->fewdesc,
+            'moredesc' => $request->moredesc,
+        ]);
+
+        return redirect()->route('blog.index')->with('success', 'Blog created successfully!');
+    }
+    
+    public function edit($id)
+    {
+        $system = System::findOrFail($id); 
+        
+        return view('blog.edit', compact('system')); 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(System $system)
+    
+    public function update(Request $request, $id)
     {
-        //
+        
+        $request->validate([
+            'title' => 'required',
+            'image' => 'nullable|image|mimes:png,jpg,webp', 
+            'fewdesc' => 'required',
+            'moredesc' => 'required',
+        ]);
+
+        $system = System::findOrFail($id);
+        $system->fill($request->only(['title', 'fewdesc', 'moredesc']));
+
+        
+        if ($request->hasFile('image')) {
+            
+            $system->image = $request->file('image')->store('images/stored', 'public');
+        }
+
+        $system->save(); 
+
+        
+        return redirect()->route('blog.index')->with('success', 'Blog updated successfully!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(System $system)
+    
+    public function destroy($id)
     {
-        //
+        $system = System::findOrFail($id); 
+        $system->delete(); 
+
+        
+        return redirect()->route('blog.index')->with('success', 'Blog deleted successfully!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, System $system)
-    {
-        //
+    public function guest(){
+        $systems = System::orderBy('created_at', 'desc')->get();
+        return view('blog.guest', compact('systems'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(System $system)
-    {
-        //
+    public function show($id) {
+        $system = System::findOrFail($id); 
+        return view('blog.show', compact('system')); 
     }
+    
 }
+
